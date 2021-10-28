@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.NLogTarget;
+using Microsoft.Extensions.Configuration;
 using NBitcoin.Protocol;
+using NLog;
+using NLog.Config;
 using Stratis.Bitcoin;
 using Stratis.Bitcoin.Builder;
 using Stratis.Bitcoin.Configuration;
@@ -27,17 +31,16 @@ namespace Opdex.Cirrus
     {
         public static async Task Main(string[] args)
         {
-            try
-            {
-                IFullNode fullNode = args.Any(a => a.Contains($"-{NodeSettings.DevModeParam}", StringComparison.InvariantCultureIgnoreCase))
-                    ? BuildCirrusDevNode(args)
-                    : BuildCirrusLiveNode(args);
-                await fullNode.RunAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("There was a problem initializing the node. Details: '{0}'", ex.Message);
-            }
+            IConfiguration configuration = BuildConfiguration();
+            SetupApplicationInsightsLogging(configuration["Azure:ApplicationInsights:InstrumentationKey"]);
+
+            var isLaunchedWithDevMode = args.Any(a => a.Contains($"-{NodeSettings.DevModeParam}", StringComparison.InvariantCultureIgnoreCase));
+
+            IFullNode fullNode = isLaunchedWithDevMode
+                ? BuildCirrusDevNode(args)
+                : BuildCirrusLiveNode(args);
+
+            await fullNode.RunAsync();
         }
 
         private static IFullNode BuildCirrusDevNode(string[] args)
@@ -51,7 +54,7 @@ namespace Opdex.Cirrus
 
             DbType dbType = nodeSettings.GetDbType();
 
-            IFullNode node = new FullNodeBuilder()
+            IFullNodeBuilder nodeBuilder = new FullNodeBuilder()
                 .UseNodeSettings(nodeSettings, dbType)
                 .UseBlockStore(dbType)
                 .AddPoAFeature()
@@ -68,10 +71,9 @@ namespace Opdex.Cirrus
                     options.UsePoAWhitelistedContracts(true);
                 })
                 .UseSmartContractWallet()
-                .AddSQLiteWalletRepository()
-                .Build();
+                .AddSQLiteWalletRepository();
 
-            return node;
+            return nodeBuilder.Build();
         }
 
         private static IFullNode BuildCirrusLiveNode(string[] args)
@@ -111,6 +113,28 @@ namespace Opdex.Cirrus
             // .UseDiagnosticFeature();
 
             return nodeBuilder.Build();
+        }
+
+        private static IConfiguration BuildConfiguration()
+        {
+            return new ConfigurationBuilder().AddJsonFile("configuration.json", optional: true, reloadOnChange: false)
+                                             .AddUserSecrets<Program>()
+                                             .AddEnvironmentVariables()
+                                             .Build();
+        }
+
+        private static void SetupApplicationInsightsLogging(string appInsightsInstrumentationKey)
+        {
+            var loggingConfiguration = new LoggingConfiguration();
+
+            ApplicationInsightsTarget appInsightsTarget = new ApplicationInsightsTarget
+            {
+                InstrumentationKey = appInsightsInstrumentationKey
+            };
+
+            loggingConfiguration.LoggingRules.Add(new LoggingRule("*", LogLevel.Warn, appInsightsTarget));
+
+            LogManager.Configuration = loggingConfiguration;
         }
     }
 }
