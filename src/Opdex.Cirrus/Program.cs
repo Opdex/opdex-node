@@ -29,7 +29,7 @@ namespace Opdex.Cirrus
         {
             try
             {
-                IFullNode fullNode = args.Any(a => a.ToLower().Contains($"-{NodeSettings.DevModeParam}"))
+                IFullNode fullNode = args.Any(a => a.Contains($"-{NodeSettings.DevModeParam}", StringComparison.InvariantCultureIgnoreCase))
                     ? BuildCirrusDevNode(args)
                     : BuildCirrusLiveNode(args);
                 await fullNode.RunAsync();
@@ -43,9 +43,8 @@ namespace Opdex.Cirrus
         private static IFullNode BuildCirrusDevNode(string[] args)
         {
             string[] devModeArgs = new[] { "-bootstrap=1", "-dbtype=rocksdb", "-defaultwalletname=cirrusdev", "-defaultwalletpassword=password" }.Concat(args).ToArray();
-            var network = new CirrusDev();
 
-            var nodeSettings = new NodeSettings(network, protocolVersion: ProtocolVersion.CIRRUS_VERSION, args: devModeArgs)
+            var nodeSettings = new NodeSettings(new CirrusDev(), protocolVersion: ProtocolVersion.CIRRUS_VERSION, args: devModeArgs)
             {
                 MinProtocolVersion = ProtocolVersion.ALT_PROTOCOL_VERSION
             };
