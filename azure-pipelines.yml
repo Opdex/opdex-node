@@ -5,6 +5,9 @@ trigger:
 resources:
 - repo: self
 
+pool:
+  vmImage: ubuntu-latest
+
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'ca5a974e-7f9c-44bc-ac22-3526d4b09fe8'
@@ -13,17 +16,12 @@ variables:
   dockerfilePath: '$(Build.SourcesDirectory)/src/Opdex.Cirrus/Dockerfile'
   tag: '$(Build.BuildId)'
 
-  # Agent VM image name
-  vmImageName: 'windows-latest'
-
 stages:
 - stage: CI
   displayName: 'Continuous Integration'
   jobs:
   - job: Build
     displayName: Build and Push
-    pool:
-      vmImage: $(vmImageName)
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry

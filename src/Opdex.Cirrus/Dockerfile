@@ -3,14 +3,14 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["src/Opdex.Cirrus/Opdex.Cirrus.csproj", "Opdex.Cirrus/"]
-RUN dotnet restore "Opdex.Cirrus\Opdex.Cirrus.csproj"
+COPY ["Opdex.Cirrus.csproj", "Opdex.Cirrus/"]
+WORKDIR /src/Opdex.Cirrus
+RUN dotnet restore "Opdex.Cirrus.csproj"
 COPY . .
-WORKDIR "/src/src/Opdex.Cirrus"
-RUN dotnet build "Opdex.Cirrus.csproj" -c Release -o /app/build
+RUN dotnet build "Opdex.Cirrus.csproj" -c Release --no-restore -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Opdex.Cirrus.csproj" -c Release -o /app/publish
+RUN dotnet publish "Opdex.Cirrus.csproj" -c Release --no-build -o /app/publish
 
 FROM base AS final
 WORKDIR /app
