@@ -45,6 +45,13 @@ stages:
         zipAfterPublish: False
       displayName: Publish
 
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/src/Opdex.Cirrus/Dockerfile'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/Dockerfile'
+        overwrite: True
+      displayName: Copy Dockerfile
+
     - task: PublishBuildArtifacts@1
       inputs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -66,5 +73,5 @@ stages:
         containerRegistry: 'acradam'
         repository: '$(IMAGE_REPOSITORY)'
         command: 'buildAndPush'
-        Dockerfile: 'DOCKERFILE_PATH'
+        Dockerfile: '$(DOCKERFILE_PATH)'
         tags: '$(TAG)'
