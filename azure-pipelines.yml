@@ -34,15 +34,6 @@ stages:
         arguments: '--configuration $(BUILD_CONFIGURATION) --no-restore'
       displayName: 'Build'
 
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'publish'
-        projects: $(SOLUTION)
-        publishWebProjects: True
-        arguments: '--configuration $(BUILD_CONFIGURATION) --no-build --output $(Build.ArtifactStagingDirectory)'
-        zipAfterPublish: False
-      displayName: Publish
-
     - task: PublishBuildArtifacts@1
       inputs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -50,7 +41,7 @@ stages:
       displayName: Share
 
   - job: Push
-    displayName: Docker build and push
+    displayName: Docker Build and Push
 
     variables:
       IMAGE_REPOSITORY: 'opdex-node'
