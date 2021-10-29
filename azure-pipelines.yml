@@ -8,6 +8,9 @@ resources:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  ARTIFACT_NAME: 'opdex-node'
+
 stages:
 - stage: CI
   displayName: 'Continuous Integration'
@@ -18,7 +21,6 @@ stages:
     variables:
       SOLUTION: 'OpdexFullNode.sln'
       BUILD_CONFIGURATION: 'Release'
-      ARTIFACT_NAME: 'opdex-node'
 
     steps:
     - task: DotNetCoreCLI@2
@@ -34,6 +36,15 @@ stages:
         arguments: '--configuration $(BUILD_CONFIGURATION) --no-restore'
       displayName: 'Build'
 
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'publish'
+        projects: $(SOLUTION)
+        publishWebProjects: False
+        arguments: '--configuration $(BUILD_CONFIGURATION) --no-build --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: False
+      displayName: Publish
+
     - task: PublishBuildArtifacts@1
       inputs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -45,7 +56,7 @@ stages:
 
     variables:
       IMAGE_REPOSITORY: 'opdex-node'
-      DOCKERFILE_PATH: '$(Build.SourcesDirectory)/src/Opdex.Cirrus/Dockerfile'
+      DOCKERFILE_PATH: '$(Build.ArtifactStagingDirectory)/$(ARTIFACT_NAME)/Dockerfile'
       TAG: '$(Build.BuildId)'
 
     steps:
