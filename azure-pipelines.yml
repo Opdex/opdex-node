@@ -53,8 +53,6 @@ stages:
     displayName: Docker build and push
 
     variables:
-      # Container registry service connection established during pipeline creation
-      DOCKER_REGISTRY_SERVICE_CONNECTION: 'ca5a974e-7f9c-44bc-ac22-3526d4b09fe8'
       IMAGE_REPOSITORY: 'opdex-node'
       DOCKERFILE_PATH: '$(Build.SourcesDirectory)/src/Opdex.Cirrus/Dockerfile'
       TAG: '$(Build.BuildId)'
@@ -63,9 +61,8 @@ stages:
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
-        command: buildAndPush
-        repository: $(IMAGE_REPOSITORY)
-        dockerfile: $(DOCKERFILE_PATH)
-        containerRegistry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
-        tags: |
-          $(TAG)
+        containerRegistry: 'acradam'
+        repository: '$(IMAGE_REPOSITORY)'
+        command: 'buildAndPush'
+        Dockerfile: 'DOCKERFILE_PATH'
+        tags: '$(TAG)'
