@@ -44,15 +44,9 @@ stages:
         command: 'publish'
         projects: $(SOLUTION)
         publishWebProjects: False
-        arguments: '--configuration $(BUILD_CONFIGURATION) --no-build --output $(Build.ArtifactStagingDirectory)'
+        arguments: '--configuration $(BUILD_CONFIGURATION) --no-build'
         zipAfterPublish: False
       displayName: Publish
-
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        artifactName: '$(ARTIFACT_NAME)'
-      displayName: Share
 
     - task: Docker@2
       inputs:
