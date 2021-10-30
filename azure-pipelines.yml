@@ -23,7 +23,7 @@ stages:
       BUILD_CONFIGURATION: 'Release'
       IMAGE_REPOSITORY: 'opdex-node'
       DOCKERFILE_PATH: 'src/Opdex.Cirrus/Dockerfile'
-      TAG: '$(Build.BuildId)'
+      TAG: '$(Build.SourceVersion)'
 
     steps:
     - task: DotNetCoreCLI@2
