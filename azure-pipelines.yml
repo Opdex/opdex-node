@@ -50,7 +50,7 @@ stages:
 
     - task: Docker@2
       inputs:
-        containerRegistry: 'acradam'
+        containerRegistry: 'opdex'
         repository: '$(IMAGE_REPOSITORY)'
         command: 'buildAndPush'
         Dockerfile: '$(DOCKERFILE_PATH)'
