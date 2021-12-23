@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using NBitcoin.Protocol;
 using NLog;
 using NLog.Config;
+using Opdex.Features.KubernetesProbes;
 using Stratis.Bitcoin;
 using Stratis.Bitcoin.Builder;
 using Stratis.Bitcoin.Configuration;
@@ -105,7 +106,8 @@ namespace Opdex.Cirrus
                 .UseTransactionNotification()
                 .UseBlockNotification()
                 .UseApi()
-                .AddRPC();
+                .AddRPC()
+                .UseKubernetesProbes();
             // .AddSignalR(options =>
             // {
             //     DaemonConfiguration.ConfigureSignalRForCirrus(options);
