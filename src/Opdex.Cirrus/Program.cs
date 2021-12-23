@@ -72,7 +72,8 @@ namespace Opdex.Cirrus
                     options.UsePoAWhitelistedContracts(true);
                 })
                 .UseSmartContractWallet()
-                .AddSQLiteWalletRepository();
+                .AddSQLiteWalletRepository()
+                .UseKubernetesProbes();
 
             return nodeBuilder.Build();
         }
