@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePrefixes": [
+        "Stratis"
+      ],
+      "groupName": "Stratis"
+    }
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "ignoreDeps": [
+    "mcr.microsoft.com/dotnet/aspnet"
+  ]
+}
