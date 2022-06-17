@@ -108,6 +108,7 @@ namespace Opdex.Cirrus
                 .UseBlockNotification()
                 .UseApi()
                 .AddRPC()
+                .AddDynamicMemberhip()
                 .UseKubernetesProbes();
             // .AddSignalR(options =>
             // {
