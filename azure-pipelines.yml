@@ -26,20 +26,20 @@ stages:
       TAG: '$(Build.SourceVersion)'
 
     steps:
-    - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2.210.0
       inputs:
         command: 'restore'
         projects: $(SOLUTION)
       displayName: Restore
 
-    - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2.210.0
       inputs:
         command: 'build'
         projects: $(SOLUTION)
         arguments: '--configuration $(BUILD_CONFIGURATION) --no-restore'
       displayName: 'Build'
 
-    - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2.210.0
       inputs:
         command: 'publish'
         projects: $(SOLUTION)
