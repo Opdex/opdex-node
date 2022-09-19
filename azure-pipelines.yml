@@ -48,7 +48,7 @@ stages:
         zipAfterPublish: False
       displayName: Publish
 
-    - task: Docker@2
+    - task: Docker@2.211.0
       inputs:
         containerRegistry: 'acr-opdex'
         repository: '$(IMAGE_REPOSITORY)'
